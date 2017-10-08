@@ -25,11 +25,14 @@ namespace Clock
         //Called when mod is loading
         public override void OnLoad()
         {
+            // GUI Style
             _style = new GUIStyle();
             _style.fontSize = 12 * Screen.width / 1000;
             _style.alignment = TextAnchor.MiddleCenter;
             _style.normal.textColor = Color.white;
-            _position = new Rect(left: Screen.width - 80, top: 20, width: 80, height: 20);
+            // GUI Position
+            _position = new Rect(left: Screen.width - (Screen.width / 20), top: Screen.height - (Screen.height / 30), width: Screen.width / 20, height: 20);
+
             _raw_minute = FsmVariables.GlobalVariables.FindFsmFloat("ClockMinutes");
             _hour_count = 0;
             _isNeedReset = true;
