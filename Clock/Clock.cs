@@ -12,8 +12,8 @@ namespace Clock
         public override string Author { get { return "PigeonBB"; } }
         public override string Version { get { return "1.0"; } }
 
-        GUIStyle _style;
-        private Rect _position;
+        private GameObject _clockObject;
+        private GameObject _clockData;
         private uint _hour;
         private uint _hour_count;
         private float _actual_minutes;
@@ -21,29 +21,35 @@ namespace Clock
         private bool _doUpdateHour;
         private bool _isNeedReset;
         private bool _isSlept;
+        private bool _isInitialize;
 
         //Called when mod is loading
         public override void OnLoad()
         {
-            // GUI Style
-            _style = new GUIStyle();
-            _style.fontSize = 12 * Screen.width / 1000;
-            _style.alignment = TextAnchor.MiddleCenter;
-            _style.normal.textColor = Color.white;
-            // GUI Position
-            _position = new Rect(left: Screen.width - (Screen.width / 20), top: Screen.height - (Screen.height / 30), width: Screen.width / 20, height: 20);
-            // in-game clock
+            // in-game clock variable
             _raw_minute = FsmVariables.GlobalVariables.FindFsmFloat("ClockMinutes");
-            _hour_count = 0;
+            
             // global flags
+            _hour_count = 0;
             _isNeedReset = true;
+            _isInitialize = true;
         }
 
         // Update is called once per frame
         public override void Update()
         {
-            if (Application.loadedLevel == 3)
+            if (Application.loadedLevelName == "GAME")
             {
+                if (_isInitialize)
+                {
+                    _clockObject = GameObject.Instantiate<GameObject>(GameObject.Find("GUI/HUD/Day"));
+                    _clockData = _clockObject.transform.Find("Data").gameObject;
+                    GameObject.Destroy(_clockData.GetComponent("PlayMakerFSM"));
+                    _clockObject.transform.SetParent(GameObject.Find("GUI/HUD").transform, false);
+                    _clockObject.transform.localPosition -= new Vector3(1.5f, 0f, 0);
+                    _isInitialize = false;
+                }
+
                 // once when startup or bak to main menu
                 if (_isNeedReset)
                 {
@@ -160,7 +166,8 @@ namespace Clock
         {
             if (Application.loadedLevel == 3)
             {
-                GUI.Label(_position, _hour.ToString("00") + ":" + Math.Floor(_actual_minutes).ToString("00"), _style);
+                if (_clockObject)
+                    _clockData.GetComponent<TextMesh>().text = _hour.ToString("00") + ":" + Math.Floor(_actual_minutes).ToString("00");
             }
         }
     }
