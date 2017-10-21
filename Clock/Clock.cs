@@ -134,9 +134,9 @@ namespace Clock
                     break;
                 case 2:
                     if (isNight)
-                        _hour = 18;
-                    else
                         _hour = 6;
+                    else
+                        _hour = 18;
                     break;
                 case 3:
                     if (isNight)
